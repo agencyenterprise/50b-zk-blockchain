@@ -27,7 +27,7 @@ contract Escrow is Ownable {
     }
 
     function balanceOf(address payee) public view returns (uint256) {
-        return _deposits[payee];
+        return _deposits[payee] - _locked[payee];
     }
 
     function lockedOf(address payee) public view returns (uint256) {
@@ -45,7 +45,6 @@ contract Escrow is Ownable {
     function lock(address payer, uint256 amount) public onlyOwner {
         require(_deposits[payer] >= amount, "Insufficient funds to lock");
 
-        _deposits[payer] -= amount;
         _locked[payer] += amount;
 
         emit Locked(payer, amount);
@@ -55,7 +54,6 @@ contract Escrow is Ownable {
         require(_locked[payer] >= amount, "Insufficient funds to unlock");
 
         _locked[payer] -= amount;
-        _deposits[payer] += amount;
 
         emit Unlocked(payer, amount);
     }
@@ -63,6 +61,7 @@ contract Escrow is Ownable {
     function pay(address payer, address payee, uint256 amount) public onlyOwner {
         require(_locked[payer] >= amount, "Insufficient funds locked");
 
+        _deposits[payer] -= amount;
         _locked[payer] -= amount;
 
         IERC20(tokenAddress).approve(address(this), amount);
@@ -72,7 +71,7 @@ contract Escrow is Ownable {
     }
 
     function withdraw(uint256 amount) public {
-        require(_deposits[msg.sender] >= amount, "Insufficient funds to withdraw");
+        require(_deposits[msg.sender] - _locked[msg.sender] >= amount, "Insufficient funds to withdraw");
 
         _deposits[msg.sender] -= amount;
 
