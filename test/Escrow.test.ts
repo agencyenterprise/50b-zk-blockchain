@@ -154,6 +154,9 @@ describe("Escrow", () => {
       // Act 1 -> Client1 pays Worker1
       await escrowContract
         .connect(hub)
+        .lock(client1.address, hre.ethers.parseEther("1"));
+      await escrowContract
+        .connect(hub)
         .pay(client1.address, worker1.address, hre.ethers.parseEther("1"));
 
       // Assert 1 -> Client1 pays Worker1
@@ -186,6 +189,9 @@ describe("Escrow", () => {
       // Act 2 -> Client2 pays Worker1
       await escrowContract
         .connect(hub)
+        .lock(client2.address, hre.ethers.parseEther("1"));
+      await escrowContract
+        .connect(hub)
         .pay(client2.address, worker1.address, hre.ethers.parseEther("1"));
 
       // Assert 2 -> Client2 pays Worker1
@@ -216,6 +222,9 @@ describe("Escrow", () => {
       expect(client2EscrowBalance).to.equal(hre.ethers.parseEther("4")); // Changed -1
 
       // Act 3 -> Client2 pays Worker2
+      await escrowContract
+        .connect(hub)
+        .lock(client2.address, hre.ethers.parseEther("1"));
       await escrowContract
         .connect(hub)
         .pay(client2.address, worker2.address, hre.ethers.parseEther("1"));
