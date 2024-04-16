@@ -26,12 +26,12 @@ contract Escrow is Ownable {
         tokenAddress = tokenAddress_;
     }
 
-    function balanceOf(address payee) public view returns (uint256) {
-        return _deposits[payee] - _locked[payee];
+    function balanceOf(address payer) public view returns (uint256) {
+        return _deposits[payer] - _locked[payer];
     }
 
-    function lockedOf(address payee) public view returns (uint256) {
-        return _locked[payee];
+    function lockedOf(address payer) public view returns (uint256) {
+        return _locked[payer];
     }
 
     function deposit(uint256 amount) public {
